@@ -1,4 +1,7 @@
-bun test
+# Run tests only if any test files exist (bun test fails when none are found)
+if git ls-files '*.test.*' '*.spec.*' '*_test_*' '*_spec_*' | grep -q .; then
+  bun test
+fi
 # ultracite
 #!/bin/sh
 # Check if there are any staged files
