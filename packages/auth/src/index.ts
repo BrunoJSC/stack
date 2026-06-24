@@ -1,5 +1,6 @@
 import { expo } from "@better-auth/expo";
 import { createDb } from "@stack/db";
+// biome-ignore lint/performance/noNamespaceImport: drizzle adapter needs the full schema namespace
 import * as schema from "@stack/db/schema/auth";
 import { env } from "@stack/env/server";
 import { betterAuth } from "better-auth";

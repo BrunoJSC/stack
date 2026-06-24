@@ -2,6 +2,7 @@ import { expoClient } from "@better-auth/expo/client";
 import { env } from "@stack/env/native";
 import { createAuthClient } from "better-auth/react";
 import Constants from "expo-constants";
+// biome-ignore lint/performance/noNamespaceImport: expo-secure-store is consumed as a storage object
 import * as SecureStore from "expo-secure-store";
 
 export const authClient = createAuthClient({

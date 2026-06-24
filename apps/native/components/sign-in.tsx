@@ -113,7 +113,7 @@ function SignIn() {
 								<View
 									style={[
 										styles.errorContainer,
-										{ backgroundColor: theme.notification + "20" },
+										{ backgroundColor: `${theme.notification}20` },
 									]}
 								>
 									<Text

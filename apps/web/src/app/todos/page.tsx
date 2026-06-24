@@ -12,7 +12,7 @@ import { Checkbox } from "@stack/ui/components/checkbox";
 import { Input } from "@stack/ui/components/input";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Loader2, Trash2 } from "lucide-react";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, type ReactNode, useState } from "react";
 
 import { trpc } from "@/utils/trpc";
 
@@ -60,6 +60,54 @@ export default function TodosPage() {
 		deleteMutation.mutate({ id });
 	};
 
+	let todoContent: ReactNode;
+	if (todos.isLoading) {
+		todoContent = (
+			<div className="flex justify-center py-4">
+				<Loader2 className="h-6 w-6 animate-spin" />
+			</div>
+		);
+	} else if (todos.data?.length === 0) {
+		todoContent = (
+			<p className="py-4 text-center">No todos yet. Add one above!</p>
+		);
+	} else {
+		todoContent = (
+			<ul className="space-y-2">
+				{todos.data?.map((todo) => (
+					<li
+						className="flex items-center justify-between rounded-md border p-2"
+						key={todo.id}
+					>
+						<div className="flex items-center space-x-2">
+							<Checkbox
+								checked={todo.completed}
+								id={`todo-${todo.id}`}
+								onCheckedChange={() =>
+									handleToggleTodo(todo.id, todo.completed)
+								}
+							/>
+							<label
+								className={`${todo.completed ? "text-muted-foreground line-through" : ""}`}
+								htmlFor={`todo-${todo.id}`}
+							>
+								{todo.text}
+							</label>
+						</div>
+						<Button
+							aria-label="Delete todo"
+							onClick={() => handleDeleteTodo(todo.id)}
+							size="icon"
+							variant="ghost"
+						>
+							<Trash2 className="h-4 w-4" />
+						</Button>
+					</li>
+				))}
+			</ul>
+		);
+	}
+
 	return (
 		<div className="mx-auto w-full max-w-md py-10">
 			<Card>
@@ -90,46 +138,7 @@ export default function TodosPage() {
 						</Button>
 					</form>
 
-					{todos.isLoading ? (
-						<div className="flex justify-center py-4">
-							<Loader2 className="h-6 w-6 animate-spin" />
-						</div>
-					) : todos.data?.length === 0 ? (
-						<p className="py-4 text-center">No todos yet. Add one above!</p>
-					) : (
-						<ul className="space-y-2">
-							{todos.data?.map((todo) => (
-								<li
-									className="flex items-center justify-between rounded-md border p-2"
-									key={todo.id}
-								>
-									<div className="flex items-center space-x-2">
-										<Checkbox
-											checked={todo.completed}
-											id={`todo-${todo.id}`}
-											onCheckedChange={() =>
-												handleToggleTodo(todo.id, todo.completed)
-											}
-										/>
-										<label
-											className={`${todo.completed ? "text-muted-foreground line-through" : ""}`}
-											htmlFor={`todo-${todo.id}`}
-										>
-											{todo.text}
-										</label>
-									</div>
-									<Button
-										aria-label="Delete todo"
-										onClick={() => handleDeleteTodo(todo.id)}
-										size="icon"
-										variant="ghost"
-									>
-										<Trash2 className="h-4 w-4" />
-									</Button>
-								</li>
-							))}
-						</ul>
-					)}
+					{todoContent}
 				</CardContent>
 			</Card>
 		</div>

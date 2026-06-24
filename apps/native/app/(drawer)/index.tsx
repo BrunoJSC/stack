@@ -19,6 +19,13 @@ export default function Home() {
 	const isLoading = healthCheck?.isLoading;
 	const { data: session } = authClient.useSession();
 
+	let connectionStatus = "API Disconnected";
+	if (isLoading) {
+		connectionStatus = "Checking connection...";
+	} else if (isConnected) {
+		connectionStatus = "Connected to API";
+	}
+
 	return (
 		<Container>
 			<ScrollView
@@ -118,11 +125,7 @@ export default function Home() {
 											style={{ opacity: 0.7 }}
 											textStyle={{ color: theme.text, fontSize: 12 }}
 										>
-											{isLoading
-												? "Checking connection..."
-												: isConnected
-													? "Connected to API"
-													: "API Disconnected"}
+											{connectionStatus}
 										</ExpoUIText>
 									</Column>
 								</Host>

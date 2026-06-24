@@ -36,21 +36,19 @@ export default function RootLayout() {
 	const { isDarkColorScheme } = useColorScheme();
 
 	return (
-		<>
-			<QueryClientProvider client={queryClient}>
-				<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-					<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
-					<GestureHandlerRootView style={styles.container}>
-						<Stack>
-							<Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-							<Stack.Screen
-								name="modal"
-								options={{ title: "Modal", presentation: "modal" }}
-							/>
-						</Stack>
-					</GestureHandlerRootView>
-				</ThemeProvider>
-			</QueryClientProvider>
-		</>
+		<QueryClientProvider client={queryClient}>
+			<ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+				<StatusBar style={isDarkColorScheme ? "light" : "dark"} />
+				<GestureHandlerRootView style={styles.container}>
+					<Stack>
+						<Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+						<Stack.Screen
+							name="modal"
+							options={{ title: "Modal", presentation: "modal" }}
+						/>
+					</Stack>
+				</GestureHandlerRootView>
+			</ThemeProvider>
+		</QueryClientProvider>
 	);
 }
