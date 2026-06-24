@@ -1,0 +1,29 @@
+{
+  "name": "@stack/api",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {},
+  "dependencies": {
+    "@stack/auth": "workspace:*",
+    "@stack/db": "workspace:*",
+    "@stack/env": "workspace:*",
+    "@trpc/client": "catalog:",
+    "@trpc/server": "catalog:",
+    "@types/pg": "^8.16.0",
+    "dotenv": "catalog:",
+    "drizzle-orm": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@stack/config": "workspace:*",
+    "elysia": "catalog:",
+    "typescript": "catalog:"
+  }
+}
