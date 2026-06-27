@@ -1,47 +1,31 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 
+import HeroFreelancers from "@/components/hero/hero-freelancers";
+import TalentsShowcase from "@/components/talents/talents-showcase";
 import { trpc } from "@/utils/trpc";
-
-const TITLE_TEXT = `
- ██████╗ ███████╗████████╗████████╗███████╗██████╗
- ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
- ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
- ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
- ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
- ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
-
- ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
- ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-    ██║       ███████╗   ██║   ███████║██║     █████╔╝
-    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
-    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
- `;
 
 export default function Home() {
 	const healthCheck = useQuery(trpc.healthCheck.queryOptions());
 
-	let apiStatus = "Disconnected";
+	let apiStatus = "Sistema offline";
 	if (healthCheck.isLoading) {
-		apiStatus = "Checking...";
+		apiStatus = "Verificando...";
 	} else if (healthCheck.data) {
-		apiStatus = "Connected";
+		apiStatus = "Sistema online";
 	}
 
 	return (
-		<div className="container mx-auto max-w-3xl px-4 py-2">
-			<pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
-			<div className="grid gap-6">
-				<section className="rounded-lg border p-4">
-					<h2 className="mb-2 font-medium">API Status</h2>
-					<div className="flex items-center gap-2">
-						<div
-							className={`h-2 w-2 rounded-full ${healthCheck.data ? "bg-green-500" : "bg-red-500"}`}
-						/>
-						<span className="text-muted-foreground text-sm">{apiStatus}</span>
-					</div>
-				</section>
+		<div className="bg-[#060607]">
+			<HeroFreelancers />
+			<TalentsShowcase />
+			<div className="flex justify-center px-4 pb-24">
+				<span className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/2 px-3.5 py-1.5 text-white/50 text-xs">
+					<span
+						className={`size-1.5 rounded-full ${healthCheck.data ? "bg-emerald-400" : "bg-white/30"}`}
+					/>
+					{apiStatus}
+				</span>
 			</div>
 		</div>
 	);

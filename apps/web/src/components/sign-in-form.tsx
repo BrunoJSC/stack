@@ -1,6 +1,4 @@
 import { Button } from "@stack/ui/components/button";
-import { Input } from "@stack/ui/components/input";
-import { Label } from "@stack/ui/components/label";
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -8,15 +6,15 @@ import z from "zod";
 
 import { authClient } from "@/lib/auth-client";
 
-import Loader from "./loader";
+import AuthField from "./auth-field";
 
-export default function SignInForm({
-	onSwitchToSignUp,
-}: {
-	onSwitchToSignUp: () => void;
-}) {
+const signInSchema = z.object({
+	email: z.email("Endereço de e-mail inválido"),
+	password: z.string().min(8, "A senha deve ter ao menos 8 caracteres"),
+});
+
+export default function SignInForm() {
 	const router = useRouter();
-	const { isPending } = authClient.useSession();
 
 	const form = useForm({
 		defaultValues: {
@@ -32,7 +30,7 @@ export default function SignInForm({
 				{
 					onSuccess: () => {
 						router.push("/dashboard");
-						toast.success("Sign in successful");
+						toast.success("Login realizado com sucesso");
 					},
 					onError: (error) => {
 						toast.error(error.error.message || error.error.statusText);
@@ -41,102 +39,59 @@ export default function SignInForm({
 			);
 		},
 		validators: {
-			onSubmit: z.object({
-				email: z.email("Invalid email address"),
-				password: z.string().min(8, "Password must be at least 8 characters"),
-			}),
+			onSubmit: signInSchema,
 		},
 	});
 
-	if (isPending) {
-		return <Loader />;
-	}
-
 	return (
-		<div className="mx-auto mt-10 w-full max-w-md p-6">
-			<h1 className="mb-6 text-center font-bold text-3xl">Welcome Back</h1>
+		<form
+			className="grid gap-4"
+			onSubmit={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				form.handleSubmit();
+			}}
+		>
+			<form.Field name="email">
+				{(field) => (
+					<AuthField
+						autoComplete="email"
+						field={field}
+						label="E-mail"
+						placeholder="voce@exemplo.com"
+						type="email"
+					/>
+				)}
+			</form.Field>
 
-			<form
-				className="space-y-4"
-				onSubmit={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					form.handleSubmit();
-				}}
+			<form.Field name="password">
+				{(field) => (
+					<AuthField
+						autoComplete="current-password"
+						field={field}
+						label="Senha"
+						placeholder="••••••••"
+						type="password"
+					/>
+				)}
+			</form.Field>
+
+			<form.Subscribe
+				selector={(state) => ({
+					canSubmit: state.canSubmit,
+					isSubmitting: state.isSubmitting,
+				})}
 			>
-				<div>
-					<form.Field name="email">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Email</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									type="email"
-									value={field.state.value}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<p className="text-red-500" key={error?.message}>
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
-
-				<div>
-					<form.Field name="password">
-						{(field) => (
-							<div className="space-y-2">
-								<Label htmlFor={field.name}>Password</Label>
-								<Input
-									id={field.name}
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									type="password"
-									value={field.state.value}
-								/>
-								{field.state.meta.errors.map((error) => (
-									<p className="text-red-500" key={error?.message}>
-										{error?.message}
-									</p>
-								))}
-							</div>
-						)}
-					</form.Field>
-				</div>
-
-				<form.Subscribe
-					selector={(state) => ({
-						canSubmit: state.canSubmit,
-						isSubmitting: state.isSubmitting,
-					})}
-				>
-					{({ canSubmit, isSubmitting }) => (
-						<Button
-							className="w-full"
-							disabled={!canSubmit || isSubmitting}
-							type="submit"
-						>
-							{isSubmitting ? "Submitting..." : "Sign In"}
-						</Button>
-					)}
-				</form.Subscribe>
-			</form>
-
-			<div className="mt-4 text-center">
-				<Button
-					className="text-indigo-600 hover:text-indigo-800"
-					onClick={onSwitchToSignUp}
-					variant="link"
-				>
-					Need an account? Sign Up
-				</Button>
-			</div>
-		</div>
+				{({ canSubmit, isSubmitting }) => (
+					<Button
+						className="mt-2 w-full"
+						disabled={!canSubmit || isSubmitting}
+						type="submit"
+					>
+						{isSubmitting ? "Entrando..." : "Entrar"}
+					</Button>
+				)}
+			</form.Subscribe>
+		</form>
 	);
 }

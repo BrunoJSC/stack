@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@stack/ui/components/button";
 import {
 	Card,
 	CardContent,
@@ -11,17 +10,28 @@ import {
 import { Boxes } from "lucide-react";
 import { motion } from "motion/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import Loader from "@/components/loader";
 import SignInForm from "@/components/sign-in-form";
 import SignUpForm from "@/components/sign-up-form";
 import { authClient } from "@/lib/auth-client";
 
-export default function LoginPage() {
-	const { isPending } = authClient.useSession();
-	const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
+interface AuthShellProps {
+	mode: "sign-in" | "sign-up";
+}
+
+export default function AuthShell({ mode }: AuthShellProps) {
+	const router = useRouter();
+	const { data: session, isPending } = authClient.useSession();
 	const isSignIn = mode === "sign-in";
+
+	useEffect(() => {
+		if (session) {
+			router.replace("/dashboard");
+		}
+	}, [session, router]);
 
 	return (
 		<div className="relative isolate flex min-h-full items-center justify-center overflow-hidden px-4 py-16 sm:py-24">
@@ -99,14 +109,12 @@ export default function LoginPage() {
 
 								<p className="mt-6 border-border/60 border-t pt-6 text-center text-muted-foreground text-sm">
 									{isSignIn ? "Não tem uma conta?" : "Já tem uma conta?"}{" "}
-									<Button
-										className="h-auto p-0 text-sm"
-										onClick={() => setMode(isSignIn ? "sign-up" : "sign-in")}
-										type="button"
-										variant="link"
+									<Link
+										className="font-medium text-foreground underline-offset-4 hover:underline"
+										href={isSignIn ? "/register" : "/login"}
 									>
 										{isSignIn ? "Criar conta" : "Entrar"}
-									</Button>
+									</Link>
 								</p>
 							</>
 						)}
